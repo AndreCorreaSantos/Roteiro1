@@ -1,4 +1,4 @@
-DUVIDAS: QUESTAO 12 -NAO SEI SE ESTA CORRETO, QUESTAO 7 E 8 TAMBEM
+repositório do roteiro: https://github.com/AndreCorreaSantos/Roteiro1.git
 
 ## Roteiro 1
 
