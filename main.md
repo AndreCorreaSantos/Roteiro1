@@ -40,7 +40,7 @@ A grande maioria dos logs do protocolo LDAP que encontrei seguiam o seguinte pad
 3481    839.331618    10.0.19.14    10.0.19.9    LDAP    203    SASL GSS-API Integrity: searchRequest(4) "CN=DESKTOP-5QS3D5D,CN=Computers,DC=burnincandle,DC=com" baseObject
 3482    839.331994    10.0.19.9    10.0.19.14    LDAP    227    SASL GSS-API Integrity: searchResEntry(4) "CN=DESKTOP-5QS3D5D,CN=Computers,DC=burnincandle,DC=com" searchResDone(4) success  [4 results]
 
-Ou seja, o cliente de número 10.0.19.14 inicia a conversa e requisita algo para o servidor de IP 10.0.19.9, que responde com um resultado. Assim, é possível concluir que o controlador de domínio dessa rede possui IP 10.0.19.9, com nome burnincandle.com.
+Ou seja, o cliente de número 10.0.19.14 inicia a conversa e requisita algo para o servidor de IP 10.0.19.9, que responde com um resultado. Assim, é possível concluir que o controlador de domínio dessa rede possui IP 10.0.19.9, com nome burnincandle.
 
 ![2](imagens_desafio1/2.png)
 
@@ -141,7 +141,8 @@ Source: Intel_4a:d7:5c (00:1e:67:4a:d7:5c)--> MAC = 00:1e:67:4a:d7:5c
 
 Utilizando uma lógica similar à questão 8, filtrei os requests: kerberos.msg_type == 13 && ip.dst == 172.17.1.129 , de modo a visualizar apenas pacotes do tipo TGS-REP enviados para o IP de interesse. Inspecionando um dos requests encontrados, é possível encontrar o nome do usuário associado ao IP sob o campo Cname.
 
-CNameString: NALYVAIKO-PC$  Nome do usuário: NALYVAIKO-PC$
+CNameString: NALYVAIKO-PC$  
+Nome do usuário: NALYVAIKO-PC$
 
 ![2](imagens_desafio3/2.png)
 
@@ -164,7 +165,7 @@ http://ifcingenieria.cl/QpX8It/BIZ/Firmenkunden/
 
 Podemos ver a data e hora em que a URL foi criada no campo Last-Modified da sessão Hypertext Transfer Protocol.
 
-Last-Modified: Mon, 12 Nov 2018 21:01:49 GMT	
+Last-Modified: Mon, 12 Nov 2018 21:01:49 GMT
 
 ![5](imagens_desafio3/5.png)
 
@@ -184,6 +185,7 @@ Inspecionando os requests do protocolo kerberos, é possível observar que o ip
 ![7](imagens_desafio4/1.png)
 
 ### 20)
+
 Observando o cname String do pedido de ticket do  protocolo kerberos, é possível encontrar o nome do usuário associado ao ip de interesse.
 
 User account: steve.smith
@@ -197,9 +199,10 @@ O hostname é DESKTOP-GXMYNO2$, obtido via sname do protocolo kerberos, TGS-REP.
 ![9](imagens_desafio4/3.png)
 
 ### 22)
+
 Filtrando os requests por http e apenas aqueles que contém zip, podemos encontrar uma série de requests no qual o host de interesse envia jpgs para um host externo.
 
-Ip contaminado: 192.168.1.216	
+Ip contaminado: 192.168.1.216
 Ip suspeito: 2.56.57.108
 
 o endereço suspeito para o qual o host envia os arquivos é: http://2.56.57.108/osk//main.php
@@ -207,10 +210,7 @@ o endereço suspeito para o qual o host envia os arquivos é: http://2.56.57.108
 ![10](imagens_desafio4/4.png)
 
 ### 23)
+
 O request sai da porta 49738 (src port do request) do ip contaminado (192.168.1.216) e vai para a porta 80 do ip suspeito (dst port do request).
 
 ![11](imagens_desafio4/5.png)
-
-
-
-
