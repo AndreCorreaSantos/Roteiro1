@@ -63,7 +63,7 @@ class PortScanner(Cmd):
 
     def scan_port(self, port, remote_server_ip):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            sock.settimeout(2)
+            sock.settimeout(0.5)
             result = sock.connect_ex((remote_server_ip, port))
             if result == 0:
                 try:
