@@ -15,7 +15,8 @@ class PortScanner(Cmd):
     def do_scan(self, args):
         """
         Scan a specific port or range of ports on a given IP: scan [ip] [start_port] [end_port] [max_threads] [0 or 1, indicating host or network scan]
-        example network scan usage: scan 192.168.0.25/24 0 100 100
+        example network scan usage: scan 192.168.0.25/24 0 100 100 1
+        example host scan usage: scan google.com 0 100 100 0
         """
         args = args.split()
         if len(args) != 5:
@@ -38,7 +39,10 @@ class PortScanner(Cmd):
             except:
                 print("Invalid network")
         else:
-            self.tcp_scanner(range(start_port, end_port + 1), remote_server_ip, max_threads)
+            try:
+                self.tcp_scanner(range(start_port, end_port + 1), remote_server_ip, max_threads)
+            except:
+                print("Invalid command, too many threads")
 
     def tcp_scanner(self, port_range, remote_server_ip, max_threads):
         ports = {}
