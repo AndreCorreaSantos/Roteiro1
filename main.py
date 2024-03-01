@@ -5,8 +5,12 @@ from tqdm import tqdm
 import ipaddress
 
 def get_ips(network_cidr):
-    network = ipaddress.ip_network(network_cidr)
-    return [str(ip) for ip in network.hosts()]
+    try:
+        network = ipaddress.ip_network(network_cidr)
+        return [str(ip) for ip in network.hosts()]
+    except ValueError as e:
+        print(f"Error parsing CIDR: {e}")
+        return []
 
 class PortScanner(Cmd):
     prompt = 'scanner> '
@@ -15,7 +19,7 @@ class PortScanner(Cmd):
     def do_scan(self, args):
         """
         Scan a specific port or range of ports on a given IP: scan [ip] [start_port] [end_port] [max_threads] [0 or 1, indicating host or network scan]
-        example network scan usage: scan 192.168.0.25/24 0 100 100 1
+        example network scan usage: scan 192.168.0.0/24 0 100 100 1
         example host scan usage: scan google.com 0 100 100 0
         """
         args = args.split()
@@ -31,13 +35,10 @@ class PortScanner(Cmd):
             print("Port range must be between 0 and 65535")
             return
         if network:
-            try:
-                ips = get_ips(remote_server_ip)
-                for ip in ips:
-                    print(f"Scanning {ip}")
-                    self.tcp_scanner(range(start_port, end_port + 1), ip, max_threads)
-            except:
-                print("Invalid network")
+            ips = get_ips(remote_server_ip)
+            for ip in ips:
+                print(f"Scanning {ip}")
+                self.tcp_scanner(range(start_port, end_port + 1), ip, max_threads)
         else:
             try:
                 self.tcp_scanner(range(start_port, end_port + 1), remote_server_ip, max_threads)
@@ -62,7 +63,7 @@ class PortScanner(Cmd):
 
     def scan_port(self, port, remote_server_ip):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-            sock.settimeout(1)
+            sock.settimeout(2)
             result = sock.connect_ex((remote_server_ip, port))
             if result == 0:
                 try:
