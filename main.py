@@ -2,26 +2,43 @@ import socket
 from cmd import Cmd
 import concurrent.futures
 from tqdm import tqdm
+import ipaddress
+
+def get_ips(network_cidr):
+    network = ipaddress.ip_network(network_cidr)
+    return [str(ip) for ip in network.hosts()]
 
 class PortScanner(Cmd):
     prompt = 'scanner> '
     intro = 'Welcome to the simple TCP port scanner! Type help or ? to list commands.\n'
 
     def do_scan(self, args):
-        "Scan a specific port or range of ports on a given IP: scan [ip] [start_port] [end_port] [max_threads]"
+        """
+        Scan a specific port or range of ports on a given IP: scan [ip] [start_port] [end_port] [max_threads] [0 or 1, indicating host or network scan]
+        example network scan usage: scan 192.168.0.25/24 0 100 100
+        """
         args = args.split()
-        if len(args) != 4:
-            print("Usage: scan [ip] [start_port] [end_port] [max_threads]")
+        if len(args) != 5:
+            print("Usage: scan [host ip or network with mask] [start_port] [end_port] [max_threads] [0 or 1, indicating host or network scan]")
             return
         
-        remote_server_ip, start_port, end_port, max_threads = args[0], int(args[1]), int(args[2]), int(args[3])
+        remote_server_ip, start_port, end_port, max_threads, network = args[0], int(args[1]), int(args[2]), int(args[3]), int(args[4])
         if start_port > end_port:
             print("Start port must be less than or equal to end port")
             return
         if start_port < 0 or end_port > 65535:
             print("Port range must be between 0 and 65535")
             return
-        self.tcp_scanner(range(start_port, end_port + 1), remote_server_ip, max_threads)
+        if network:
+            try:
+                ips = get_ips(remote_server_ip)
+                for ip in ips:
+                    print(f"Scanning {ip}")
+                    self.tcp_scanner(range(start_port, end_port + 1), ip, max_threads)
+            except:
+                print("Invalid network")
+        else:
+            self.tcp_scanner(range(start_port, end_port + 1), remote_server_ip, max_threads)
 
     def tcp_scanner(self, port_range, remote_server_ip, max_threads):
         ports = {}
