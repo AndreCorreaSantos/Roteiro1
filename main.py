@@ -6,8 +6,8 @@ import ipaddress
 
 def get_ips(network_cidr):
     try:
-        network = ipaddress.ip_network(network_cidr)
-        return [str(ip) for ip in network.hosts()]
+        net = ipaddress.ip_network(network_cidr)
+        return [str(addr) for addr in net.hosts()]
     except ValueError as e:
         print(f"Error parsing CIDR: {e}")
         return []
